@@ -31,10 +31,6 @@ function App() {
     document.activeElement === passwordRef.current
   );
 
-  // console.log(/\d/.test(data.password))
-  // console.log(/[!@#%^&*()_+-=[]{}|;':",.`]/.test(data.password))
-  console.log("contains capital test:", /A-Z/.test(data.password));
-  console.log(data);
   return (
     <div className="App">
       <div className="form-container">
@@ -103,20 +99,35 @@ function App() {
 
   function handlePasswordChange(e) {
     setData({ ...data, [e.target.name]: e.target.value });
-    validatePassword();
+    validatePassword(e.target.value);
   }
 
-  function validatePassword() {
-    const nums = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-    const symbols = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
-    if (/\d/.test(data.password))
-      setRequirements({ ...requirements, oneNumber: true });
-    if (data.password.length >= 6)
-      setRequirements({ ...requirements, sixChars: true });
-    if (/A-Z/.test(data.password))
-      setRequirements({ ...requirements, oneCapital: true });
-    if (/[!@#%^&*()_+-=[]{}|;':",.`]/.test(data.password))
-      setRequirements({ ...requirements, oneSymbol: true });
+  function validatePassword(password) {
+    // const nums = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+    // const symbols = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
+    // const newState = {
+    //   sixChars: false,
+    //   oneCapital: false,
+    //   oneSymbol: false,
+    //   oneNumber: false,
+    // }
+    console.log({ password });
+    if (/\d/.test(password))
+      setRequirements((req) => ({ ...req, oneNumber: true }));
+    else if (!/\d/.test(password))
+      setRequirements((req) => ({ ...req, oneNumber: false }));
+    if (password.length >= 6)
+      setRequirements((req) => ({ ...req, sixChars: true }));
+    else if (password.length < 6)
+      setRequirements((req) => ({ ...req, sixChars: false }));
+    if (/[A-Z]/.test(password))
+      setRequirements((req) => ({ ...req, oneCapital: true }));
+    else if (!/[A-Z]/.test(password))
+      setRequirements((req) => ({ ...req, oneCapital: false }));
+    if (/[!@#%^&*()_+-=]/.test(password))
+      setRequirements((req) => ({ ...req, oneSymbol: true }));
+    else if (!/[!@#%^&*()_+-=]/.test(password))
+      setRequirements((req) => ({ ...req, oneSymbol: false }));
   }
 
   function handleSubmit(e) {
