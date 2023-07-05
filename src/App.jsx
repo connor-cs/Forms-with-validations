@@ -13,6 +13,7 @@ function App() {
     password: "",
     passConfirmation: "",
   });
+  const [dataErr, setDataErr] = useState(false);
   const [errors, setErrors] = useState({
     emailErr: false,
     nameErr: false,
@@ -31,6 +32,8 @@ function App() {
     document.activeElement === passwordRef.current
   );
 
+  console.log(data);
+  console.log(data.password === data.passConfirmation);
   return (
     <div className="App">
       <div className="form-container">
@@ -43,7 +46,7 @@ function App() {
             onChange={(e) => handleChange(e)}
           ></input>
           {errors.nameErr ? (
-            <div className="err-msg">"Name can't be blank"</div>
+            <div className="err-msg">Name can't be blank</div>
           ) : null}
           <input
             type="email"
@@ -53,15 +56,8 @@ function App() {
             onChange={(e) => handleChange(e)}
           ></input>
           {errors.emailErr ? (
-            <div className="err-msg">'Invalid email, try again.'</div>
+            <div className="err-msg">Invalid email, try again.</div>
           ) : null}
-          {/* <input
-            type="tel"
-            placeholder="Phone number"
-            value={data.phone}
-            name="phone"
-            onChange={(e) => handleChange(e)}
-          ></input> */}
           <input
             ref={passwordRef}
             type="password"
@@ -76,17 +72,25 @@ function App() {
             type="password"
             placeholder="Confirm password"
             value={data.passConfirmation}
-            name="passCon"
+            name="passConfirmation"
             onChange={(e) => handleChange(e)}
           ></input>
           {errors.passwordErr ? (
-            <div className="err-msg">"Passwords must match"</div>
+            <div className="err-msg">Passwords must match</div>
           ) : null}
-          <button type="submit" onClick={handleSubmit}>
+          <button
+            type="submit"
+            onClick={(e) =>
+              handleSubmit(e, data.password, data.passConfirmation)
+            }
+          >
             Submit
           </button>
-          {success ? (
+          {success && !dataErr ? (
             <div className="success-msg">Signup successful!</div>
+          ) : null}
+          {dataErr && !success ? (
+            <div className="err-msg">Somethign went wrong, try again.</div>
           ) : null}
         </form>
       </div>
@@ -103,15 +107,7 @@ function App() {
   }
 
   function validatePassword(password) {
-    // const nums = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-    // const symbols = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
-    // const newState = {
-    //   sixChars: false,
-    //   oneCapital: false,
-    //   oneSymbol: false,
-    //   oneNumber: false,
-    // }
-    console.log({ password });
+    setSuccess(false);
     if (/\d/.test(password))
       setRequirements((req) => ({ ...req, oneNumber: true }));
     else if (!/\d/.test(password))
@@ -130,11 +126,35 @@ function App() {
       setRequirements((req) => ({ ...req, oneSymbol: false }));
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e, password, passConfirmation) {
     e.preventDefault();
-    if (!errors) setSuccess(true);
-    // if (data.password != data.passCon)
-    // if (data.email.split('').includes('@'))
+    setErrors(() => ({
+      emailErr: false,
+      nameErr: false,
+      phoneErr: false,
+      passwordErr: false,
+    }));
+    setSuccess(()=>false)
+
+    if (password !== passConfirmation) {
+      setErrors((err) => ({ ...err, passwordErr: true }));
+      setDataErr(()=>true)
+      setSuccess(()=>false)
+    }
+
+    if (!data.email.split("").includes("@")) {
+      setErrors((err) => ({ ...err, emailErr: true }));
+      setDataErr(()=>true)
+      setSuccess(()=>false)
+    }
+    if (!data.name.length > 0) {
+      setErrors((err) => ({ ...err, nameErr: true }));
+      setDataErr(()=>true)
+      setSuccess(()=>false)
+    } else {
+      setSuccess(true);
+      setDataErr(()=>false)
+    }
   }
 }
 

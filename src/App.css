@@ -63,6 +63,9 @@ input:focus {
   color: green;
 }
 
+.err-msg {
+  color: red;
+}
 .valid {
   color: green;
 }
