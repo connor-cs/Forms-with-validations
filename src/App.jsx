@@ -147,6 +147,7 @@ function App() {
       setDataErr(()=>true)
       setSuccess(()=>false)
     }
+    else if (data.email.split("").includes("@")) setErrors((err)=>({...err, emailErr: false}))
     if (!data.name.length > 0) {
       setErrors((err) => ({ ...err, nameErr: true }));
       setDataErr(()=>true)
